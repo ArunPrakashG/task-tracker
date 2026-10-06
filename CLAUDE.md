@@ -32,3 +32,4 @@ FastAPI + async SQLAlchemy + Postgres task tracker (live coding test).
 - `app/schemas` and `app/services` are namespace packages (no `__init__.py`).
 - Functional tests only: drive the HTTP API; no unit tests per function.
 - Never edit an existing migration and never change the database schema directly; every model change gets a new Alembic revision generated with `--autogenerate`.
+- Deletion is soft: `projects` and `tasks` have `deleted_at`; every read/write query must filter `deleted_at IS NULL`. Project names are unique among live projects only (partial unique index).

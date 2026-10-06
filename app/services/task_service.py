@@ -27,7 +27,7 @@ def _describe_allowed(current: TaskStatus) -> str:
 
 async def ensure_project_exists(session: AsyncSession, project_id: uuid.UUID) -> Project:
     project = await session.get(Project, project_id)
-    if project is None:
+    if project is None or project.deleted_at is not None:
         raise AppError(404, "PROJECT_NOT_FOUND", "Project not found", field="project_id")
     return project
 
@@ -54,7 +54,7 @@ async def transition_status(
     Returns the updated task and its previous status. Raises ``AppError`` (and
     rolls back, releasing the lock) for an unknown task or a disallowed move.
     """
-    stmt = select(Task).where(Task.id == task_id).with_for_update()
+    stmt = select(Task).where(Task.id == task_id, Task.deleted_at.is_(None)).with_for_update()
     task = (await session.execute(stmt)).scalar_one_or_none()
     if task is None:
         await session.rollback()

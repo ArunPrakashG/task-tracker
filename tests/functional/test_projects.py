@@ -2,7 +2,7 @@ import uuid
 
 from sqlalchemy import select
 
-from app.models import Task
+from app.models import Project, Task
 
 
 async def test_create_project_returns_201_envelope(client):
@@ -64,7 +64,7 @@ async def test_delete_project_returns_204(client):
     assert all(p["id"] != created["id"] for p in listed)
 
 
-async def test_delete_project_cascades_to_tasks_only_for_that_project(
+async def test_delete_project_soft_deletes_project_and_its_tasks_only(
     client, db_session, make_project, make_task
 ):
     doomed = await make_project(name="doomed")
@@ -77,11 +77,47 @@ async def test_delete_project_cascades_to_tasks_only_for_that_project(
     r = await client.delete(f"/api/v1/projects/{doomed_id}")
     assert r.status_code == 204
 
+    # Rows are retained and marked deleted; only the doomed project's rows.
     db_session.expire_all()
-    gone = (await db_session.execute(select(Task).where(Task.project_id == doomed_id))).all()
-    remaining = (await db_session.execute(select(Task).where(Task.project_id == kept_id))).all()
-    assert gone == []
-    assert len(remaining) == 2
+    gone = (await db_session.execute(select(Task).where(Task.project_id == doomed_id))).scalars()
+    kept_rows = (await db_session.execute(select(Task).where(Task.project_id == kept_id))).scalars()
+    assert [t.deleted_at is not None for t in gone] == [True, True]
+    assert [t.deleted_at is None for t in kept_rows] == [True, True]
+    project_row = (
+        await db_session.execute(select(Project).where(Project.id == doomed_id))
+    ).scalar_one()
+    assert project_row.deleted_at is not None
+
+
+async def test_soft_deleted_project_is_hidden_everywhere(client, make_project, make_task):
+    project = await make_project(name="hidden")
+    task = await make_task(project, title="t")
+    assert (await client.delete(f"/api/v1/projects/{project.id}")).status_code == 204
+
+    listed = (await client.get("/api/v1/projects")).json()["data"]
+    assert all(p["id"] != str(project.id) for p in listed)
+    for method, url, body in [
+        ("get", f"/api/v1/projects/{project.id}/tasks", None),
+        ("get", f"/api/v1/projects/{project.id}/summary", None),
+        ("post", f"/api/v1/projects/{project.id}/tasks", {"title": "x"}),
+        ("delete", f"/api/v1/projects/{project.id}", None),
+    ]:
+        r = await client.request(method, url, json=body)
+        assert r.status_code == 404, url
+        assert r.json()["error"]["code"] == "PROJECT_NOT_FOUND"
+    r = await client.patch(f"/api/v1/tasks/{task.id}/status", json={"status": "in_progress"})
+    assert r.status_code == 404
+    assert r.json()["error"]["code"] == "TASK_NOT_FOUND"
+
+
+async def test_name_can_be_reused_after_soft_delete_but_not_while_active(client):
+    first = (await client.post("/api/v1/projects", json={"name": "reuse"})).json()["data"]
+    dup = await client.post("/api/v1/projects", json={"name": "reuse"})
+    assert dup.status_code == 409
+    await client.delete(f"/api/v1/projects/{first['id']}")
+    again = await client.post("/api/v1/projects", json={"name": "reuse"})
+    assert again.status_code == 201
+    assert again.json()["data"]["id"] != first["id"]
 
 
 async def test_delete_unknown_project_returns_404(client):

@@ -84,7 +84,7 @@ All endpoints are under `/api/v1`.
 |---|---|---|---|---|
 | POST | `/api/v1/projects` | 201 | — | Create a project |
 | GET | `/api/v1/projects` | 200 | — | List all projects |
-| DELETE | `/api/v1/projects/{project_id}` | 204 | — | Delete a project |
+| DELETE | `/api/v1/projects/{project_id}` | 204 | — | Soft-delete a project and its tasks (rows kept, `deleted_at` set; 404 afterwards) |
 | POST | `/api/v1/projects/{project_id}/tasks` | 201 | — | Create a task in a project |
 | GET | `/api/v1/projects/{project_id}/tasks` | 200 | `status`, `priority`, `limit` (1–100, default 20), `cursor` | List tasks in a project with cursor pagination |
 | PATCH | `/api/v1/tasks/{task_id}/status` | 200 | — | Transition a task to a new status |

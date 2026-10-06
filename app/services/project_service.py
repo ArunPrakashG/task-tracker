@@ -1,11 +1,12 @@
+import datetime as dt
 import uuid
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.errors import AppError
-from app.models import Project
+from app.models import Project, Task
 from app.schemas.project import ProjectCreate
 
 _UNIQUE_VIOLATION = "23505"
@@ -37,14 +38,23 @@ async def create_project(session: AsyncSession, payload: ProjectCreate) -> Proje
 
 async def list_projects(session: AsyncSession) -> list[Project]:
     result = await session.execute(
-        select(Project).order_by(Project.created_at.desc(), Project.id.desc())
+        select(Project)
+        .where(Project.deleted_at.is_(None))
+        .order_by(Project.created_at.desc(), Project.id.desc())
     )
     return list(result.scalars().all())
 
 
 async def delete_project(session: AsyncSession, project_id: uuid.UUID) -> None:
+    """Soft-delete a project and its tasks; rows stay in the database with ``deleted_at`` set."""
     project = await session.get(Project, project_id)
-    if project is None:
+    if project is None or project.deleted_at is not None:
         raise AppError(404, "PROJECT_NOT_FOUND", "Project not found", field="project_id")
-    await session.delete(project)
+    now = dt.datetime.now(dt.UTC)
+    project.deleted_at = now
+    await session.execute(
+        update(Task)
+        .where(Task.project_id == project_id, Task.deleted_at.is_(None))
+        .values(deleted_at=now)
+    )
     await session.commit()

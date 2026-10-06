@@ -21,7 +21,7 @@ def build_task_query(
     cursor: str | None = None,
     limit: int | None = None,
 ) -> Select[tuple[Task]]:
-    stmt = select(Task).where(Task.project_id == project_id)
+    stmt = select(Task).where(Task.project_id == project_id, Task.deleted_at.is_(None))
     if status is not None:
         stmt = stmt.where(Task.status == status)
     if priority is not None:

@@ -82,4 +82,6 @@ class Task(Base):
         nullable=False,
     )
 
+    deleted_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
     project: Mapped[Project] = relationship(back_populates="tasks")
