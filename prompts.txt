@@ -68,3 +68,17 @@ can you cleanup the prompts.txt file as well? it has sub agent responses in it, 
 
 === PROMPT 19 ===
 merge wave/integration into main and push
+
+=== PROMPT 20 ===
+integrate swagger for docs + add open telemetry if its not already done.
+
+=== PROMPT 21 ===
+Share the URL for swagger docs and test credentials if any.
+
+=== PROMPT 22 ===
+merge feat/api-docs into main and push
+also check the URLs as the server seems down. spin them up in docker
+
+=== PROMPT 23 ===
+delete the merged local branches
+and push any changes pending to the remote
