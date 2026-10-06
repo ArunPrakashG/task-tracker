@@ -65,3 +65,6 @@ Before next wave, i want you to build soft deletion. currently delete means data
 
 === PROMPT 18 ===
 can you cleanup the prompts.txt file as well? it has sub agent responses in it, it should only contain my own prompts
+
+=== PROMPT 19 ===
+merge wave/integration into main and push
