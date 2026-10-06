@@ -393,7 +393,7 @@ W1: done
 W2: done
 W3: done
 W4: done
-W5: pending
+W5: running
 W6: pending
 P1a: done
 P1b: done
@@ -406,9 +406,9 @@ P9: done
 P3: done
 P4: done
 P5: done
-P6: pending
-P7a: pending
-P8: pending
+P6: running
+P7a: running
+P8: running
 P7b: pending
 P10a: pending
 P10b: pending
