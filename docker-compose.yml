@@ -8,6 +8,8 @@ services:
       REDIS_URL: redis://redis:6379/0
       RATE_LIMIT_REQUESTS: ${RATE_LIMIT_REQUESTS:-30}
       RATE_LIMIT_WINDOW_SECONDS: ${RATE_LIMIT_WINDOW_SECONDS:-60}
+      OTEL_ENABLED: ${OTEL_ENABLED:-false}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
     depends_on:
       db:
         condition: service_healthy
