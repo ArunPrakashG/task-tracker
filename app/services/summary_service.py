@@ -1,12 +1,14 @@
 """Project summary: task totals computed with one aggregate query."""
 
 import datetime as dt
+import time
 import uuid
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.errors import AppError
+from app.core.telemetry import get_tracer
 from app.models import Project, Task, TaskStatus
 
 
@@ -25,10 +27,17 @@ async def run_summary_aggregate(session: AsyncSession, project_id: uuid.UUID, to
 
 
 async def get_project_summary(session: AsyncSession, project_id: uuid.UUID) -> dict:
-    if await session.get(Project, project_id) is None:
-        raise AppError(404, "PROJECT_NOT_FOUND", "Project not found", field="project_id")
-    today = dt.datetime.now(dt.UTC).date()
-    row = await run_summary_aggregate(session, project_id, today)
+    tracer = get_tracer()
+    with tracer.start_as_current_span("projects.summary"):
+        if await session.get(Project, project_id) is None:
+            raise AppError(404, "PROJECT_NOT_FOUND", "Project not found", field="project_id")
+        today = dt.datetime.now(dt.UTC).date()
+        with tracer.start_as_current_span("summary.db_query") as span:
+            start = time.perf_counter()
+            try:
+                row = await run_summary_aggregate(session, project_id, today)
+            finally:
+                span.set_attribute("db.duration_ms", (time.perf_counter() - start) * 1000.0)
     return {
         "total": row.total,
         "by_status": {
