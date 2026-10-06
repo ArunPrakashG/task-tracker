@@ -13,3 +13,40 @@ is every prerequisites from the PDF done? list out the pending action items.
 
 === PROMPT 4 ===
 commit everything as initial commit and push as public repo in my github
+
+=== PROMPT 5 ===
+Scaffold a fresh fastapi project with alembic + readme.md file
+i do not need any code, just entry point for now. we will set it up later.
+
+=== PROMPT 6 ===
+@"/home/arun/Downloads/Live_Coding_Test_Arun_Prakash.pdf"
+This is the project that we have to work out. it is task tracker project, a lightweight replica of clickup/linear
+DB will be postgres
+fastapi
+We will be following rest api standards for api, {host}/api/v1/projects
+controllers will be fully async, for fire and forget actions, lets return resposne immediately and then process in background.
+for alembic, once a migration is created, do not modify it or update the DB directly.every model change has to go via migrations.
+We will need a common response format.
+
+Review the task and use wave planning skill
+
+=== PROMPT 7 ===
+for tests, i dont need unit tests for each function, we can write functional tests to cover the business logic.
+
+=== PROMPT 8 ===
+lets use redis for rate limiting
+
+=== PROMPT 9 ===
+approved, write the specs
+
+=== PROMPT 10 ===
+approved, decompose into waves
+
+=== PROMPT 11 ===
+<bash-input>docker run -d --name redis -p 6379:6379 redis:7-alpine</bash-input><bash-stdout>497b4c549de92f5710fd25601fc207472829e2b6fa0ae88826495e29452d746a</bash-stdout><bash-stderr></bash-stderr>
+
+=== PROMPT 12 ===
+approved, proceed with implementation, use models as needed, be token efficient and parallise as much as possible.
+
+=== PROMPT 13 ===
+/wave-planning:wave-execute
