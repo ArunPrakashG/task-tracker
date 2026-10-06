@@ -342,7 +342,7 @@ integration_checks: ["cmd:uv run python -c \"import app.config, app.database, ap
 ```yaml wave
 wave: 2
 phases: [P1d, P2c]
-integration_owned: []
+integration_owned: [pyproject.toml]
 criteria: [F2.AC1, F2.AC2, F2.AC3, F2.AC4, F2.AC5, F2.AC6, F2.AC7, F2.AC8, F2.AC9, F2.AC10, F1.AC1, F1.AC2, F1.AC3, F1.AC4, F1.AC5, F1.AC6, F1.AC7, F1.AC8, F1.AC9, F1.AC10]
 integration_checks: ["cmd:uv run python -c \"import app.main\"", "cmd:uv run alembic upgrade head && uv run alembic check"]
 ```
