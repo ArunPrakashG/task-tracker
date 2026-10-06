@@ -1,0 +1,15 @@
+# prompts.txt — All Claude Code prompts used during the live test
+# Prompts are logged automatically, in order, by .claude/hooks/log_prompt.py
+
+=== PROMPT 1 ===
+proceed with the setup
+
+=== PROMPT 2 ===
+is every prerequisites from the PDF done? list out the pending action items.
+
+=== PROMPT 3 ===
+1. We are using claude code desktop app, not CLI so this is fine.
+2. the hook is working fine.
+
+=== PROMPT 4 ===
+commit everything as initial commit and push as public repo in my github
