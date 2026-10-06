@@ -5,6 +5,7 @@ import uuid
 from typing import TYPE_CHECKING
 
 from sqlalchemy import (
+    CheckConstraint,
     Date,
     DateTime,
     Enum,
@@ -26,9 +27,15 @@ def _values(e: type) -> list[str]:
     return [m.value for m in e]  # type: ignore[attr-defined]
 
 
+def _in_list(e: type) -> str:
+    return ", ".join(f"'{v}'" for v in _values(e))
+
+
 class Task(Base):
     __tablename__ = "tasks"
     __table_args__ = (
+        CheckConstraint(f"status IN ({_in_list(TaskStatus)})", name="task_status"),
+        CheckConstraint(f"priority IN ({_in_list(TaskPriority)})", name="task_priority"),
         Index("ix_tasks_project_id_status", "project_id", "status"),
         Index("ix_tasks_project_id_created_at_id", "project_id", "created_at", "id"),
     )
@@ -42,7 +49,7 @@ class Task(Base):
         Enum(
             TaskStatus,
             native_enum=False,
-            create_constraint=True,
+            create_constraint=False,
             length=20,
             name="task_status",
             values_callable=_values,
@@ -55,7 +62,7 @@ class Task(Base):
         Enum(
             TaskPriority,
             native_enum=False,
-            create_constraint=True,
+            create_constraint=False,
             length=20,
             name="task_priority",
             values_callable=_values,
