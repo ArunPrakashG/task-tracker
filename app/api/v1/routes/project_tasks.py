@@ -41,7 +41,12 @@ async def list_project_tasks(
     session: Annotated[AsyncSession, Depends(get_db)],
     status: Annotated[TaskStatus | None, Query()] = None,
     priority: Annotated[TaskPriority | None, Query()] = None,
+    limit: Annotated[int, Query(ge=1, le=100)] = 20,
+    cursor: Annotated[str | None, Query()] = None,
 ) -> dict:
     await task_service.ensure_project_exists(session, project_id)
-    tasks = await task_query.list_tasks(session, project_id, status=status, priority=priority)
-    return ok([TaskRead.model_validate(t) for t in tasks])
+    tasks, next_cursor = await task_query.list_tasks_page(
+        session, project_id, limit, cursor=cursor, status=status, priority=priority
+    )
+    meta = {"limit": limit, "has_more": next_cursor is not None, "next_cursor": next_cursor}
+    return ok([TaskRead.model_validate(t) for t in tasks], meta=meta)
