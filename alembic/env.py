@@ -1,11 +1,16 @@
-import asyncio
+import asyncio  # noqa: I001
+import os
 from logging.config import fileConfig
 
+from dotenv import load_dotenv
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
+from app.models import Base
+
+load_dotenv()
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -16,11 +21,12 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# add your model's MetaData object here
-# for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-target_metadata = None
+url = os.environ.get("DATABASE_URL")
+if not url:
+    raise RuntimeError("DATABASE_URL is not set; define it in the environment or .env")
+config.set_main_option("sqlalchemy.url", url.replace("%", "%%"))
+
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -40,10 +46,11 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
     context.configure(
-        url=url,
+        url=config.get_main_option("sqlalchemy.url"),
         target_metadata=target_metadata,
+        compare_type=True,
+        compare_server_default=True,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
     )
@@ -53,7 +60,12 @@ def run_migrations_offline() -> None:
 
 
 def do_run_migrations(connection: Connection) -> None:
-    context.configure(connection=connection, target_metadata=target_metadata)
+    context.configure(
+        connection=connection,
+        target_metadata=target_metadata,
+        compare_type=True,
+        compare_server_default=True,
+    )
 
     with context.begin_transaction():
         context.run_migrations()
