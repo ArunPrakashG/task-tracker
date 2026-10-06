@@ -390,7 +390,7 @@ base_branch: main
 integration_branch: wave/integration
 integration_head: 3ca39cb390c8560286cffcb9c529bf2a2f9a5bcd
 W1: done
-W2: pending
+W2: running
 W3: pending
 W4: pending
 W5: pending
@@ -398,10 +398,10 @@ W6: pending
 P1a: done
 P1b: done
 P1c: done
-P1d: pending
+P1d: running
 P2a: done
 P2b: done
-P2c: pending
+P2c: running
 P9: pending
 P3: pending
 P4: pending
