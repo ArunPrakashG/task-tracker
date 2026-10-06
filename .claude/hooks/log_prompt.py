@@ -12,7 +12,7 @@ HEADER = (
 
 data = json.load(sys.stdin)
 prompt = (data.get("prompt") or "").strip()
-# Skip empty prompts and automated notifications (background agent results), which are not user prompts.
+# Skip empty prompts and automated notifications (agent results); not user prompts.
 if not prompt or prompt.startswith(("<task-notification>", "[SYSTEM NOTIFICATION")):
     sys.exit(0)
 

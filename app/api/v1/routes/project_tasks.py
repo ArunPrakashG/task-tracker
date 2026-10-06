@@ -19,6 +19,7 @@ router = APIRouter(tags=["tasks"])
 @router.post(
     "/projects/{project_id}/tasks",
     status_code=201,
+    summary="Create a task in a project",
     response_model=Envelope[TaskRead],
 )
 @rate_limit()
@@ -34,6 +35,7 @@ async def create_task(
 
 @router.get(
     "/projects/{project_id}/tasks",
+    summary="List a project's tasks (cursor-paginated, filterable by status and priority)",
     response_model=Envelope[list[TaskRead]],
 )
 async def list_project_tasks(

@@ -7,6 +7,7 @@ from fastapi import FastAPI
 
 from app.api.v1.router import build_router
 from app.core.errors import register_exception_handlers
+from app.core.openapi import DESCRIPTION, TAGS, install_openapi
 from app.core.responses import Envelope, ok
 from app.core.telemetry import setup_telemetry
 from app.database import engine
@@ -23,12 +24,19 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 
 def create_app() -> FastAPI:
-    application = FastAPI(title="task-tracker", lifespan=lifespan)
+    application = FastAPI(
+        title="Task Tracker API",
+        version="1.0.0",
+        description=DESCRIPTION,
+        openapi_tags=TAGS,
+        lifespan=lifespan,
+    )
     register_exception_handlers(application)
+    install_openapi(application)
     setup_telemetry(application)
     application.include_router(build_router(), prefix="/api/v1")
 
-    @application.get("/health", response_model=Envelope[dict[str, str]])
+    @application.get("/health", tags=["meta"], response_model=Envelope[dict[str, str]])
     async def health() -> dict:
         return ok({"status": "ok"})
 

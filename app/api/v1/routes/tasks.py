@@ -15,7 +15,11 @@ from app.services import task_service
 router = APIRouter(tags=["tasks"])
 
 
-@router.patch("/tasks/{task_id}/status", response_model=Envelope[TaskRead])
+@router.patch(
+    "/tasks/{task_id}/status",
+    summary="Change a task's status (validated against the state machine)",
+    response_model=Envelope[TaskRead],
+)
 async def update_task_status(
     task_id: uuid.UUID,
     body: TaskStatusUpdate,
