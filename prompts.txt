@@ -50,3 +50,18 @@ approved, proceed with implementation, use models as needed, be token efficient 
 
 === PROMPT 13 ===
 /wave-planning:wave-execute
+
+=== PROMPT 14 ===
+continue with wave 2
+
+=== PROMPT 15 ===
+proceed with wave 3 and 4
+
+=== PROMPT 16 ===
+continue with pending waves
+
+=== PROMPT 17 ===
+Before next wave, i want you to build soft deletion. currently delete means data is permanently lost. add a deleted_at timestamp or similar column in the table and use that for deletion, update all queries as well.
+
+=== PROMPT 18 ===
+can you cleanup the prompts.txt file as well? it has sub agent responses in it, it should only contain my own prompts
