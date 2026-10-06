@@ -12,7 +12,8 @@ HEADER = (
 
 data = json.load(sys.stdin)
 prompt = (data.get("prompt") or "").strip()
-if not prompt:
+# Skip empty prompts and automated notifications (background agent results), which are not user prompts.
+if not prompt or prompt.startswith(("<task-notification>", "[SYSTEM NOTIFICATION")):
     sys.exit(0)
 
 root = os.environ.get("CLAUDE_PROJECT_DIR") or data.get("cwd") or os.getcwd()

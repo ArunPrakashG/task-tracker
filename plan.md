@@ -342,7 +342,7 @@ integration_checks: ["cmd:uv run python -c \"import app.config, app.database, ap
 ```yaml wave
 wave: 2
 phases: [P1d, P2c]
-integration_owned: []
+integration_owned: [pyproject.toml]
 criteria: [F2.AC1, F2.AC2, F2.AC3, F2.AC4, F2.AC5, F2.AC6, F2.AC7, F2.AC8, F2.AC9, F2.AC10, F1.AC1, F1.AC2, F1.AC3, F1.AC4, F1.AC5, F1.AC6, F1.AC7, F1.AC8, F1.AC9, F1.AC10]
 integration_checks: ["cmd:uv run python -c \"import app.main\"", "cmd:uv run alembic upgrade head && uv run alembic check"]
 ```
@@ -386,31 +386,31 @@ Executed by `/wave-planning:wave-execute`. See that skill for the worktree, disp
 ## Status
 
 ```yaml status
-base_branch: none
+base_branch: main
 integration_branch: wave/integration
-integration_head: none
-W1: pending
-W2: pending
-W3: pending
-W4: pending
-W5: pending
-W6: pending
-P1a: pending
-P1b: pending
-P1c: pending
-P1d: pending
-P2a: pending
-P2b: pending
-P2c: pending
-P9: pending
-P3: pending
-P4: pending
-P5: pending
-P6: pending
-P7a: pending
-P8: pending
-P7b: pending
-P10a: pending
-P10b: pending
-P11: pending
+integration_head: af2f283
+W1: done
+W2: done
+W3: done
+W4: done
+W5: done
+W6: done
+P1a: done
+P1b: done
+P1c: done
+P1d: done
+P2a: done
+P2b: done
+P2c: done
+P9: done
+P3: done
+P4: done
+P5: done
+P6: done
+P7a: done
+P8: done
+P7b: done
+P10a: done
+P10b: done
+P11: done
 ```
